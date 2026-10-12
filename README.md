@@ -148,7 +148,7 @@ Interactive API documentation: http://127.0.0.1:8000/docs
 Open a second terminal:
 
 ```powershell
-cd "C:\Users\Acer\Downloads\DocuMind AI\documind-ai\frontend"
+cd "put your path eaxt here "
 npm install
 ```
 
