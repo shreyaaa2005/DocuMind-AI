@@ -1,0 +1,29 @@
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+venv/
+.venv/
+**/venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+node_modules/
+**/node_modules/
+dist/
+**/dist/
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+# Local uploaded documents and generated data
+backend/storage/
+
+# Local uploaded documents and generated data
+backend/storage/
+
+# Local uploaded documents and generated data
+backend/storage/
