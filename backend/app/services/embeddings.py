@@ -7,24 +7,35 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Load model globally to avoid reloading on every request
-try:
-    from sentence_transformers import SentenceTransformer
-    # all-MiniLM-L6-v2 is a lightweight model mapping sentences to 384-dimensional dense vectors
-    model = SentenceTransformer('all-MiniLM-L6-v2')
-except Exception as e:
-    logger.warning(f"Failed to load SentenceTransformer: {e}")
-    model = None
+
+# Load the embedding model only when first needed.
+_model = None
+
+def get_model():
+    global _model
+    if _model is None:
+        try:
+            from sentence_transformers import SentenceTransformer
+            _model = SentenceTransformer("all-MiniLM-L6-v2")
+        except Exception as e:
+            logger.exception("Failed to load SentenceTransformer")
+            raise RuntimeError("SentenceTransformer model is unavailable") from e
+    return _model
+
+
 
 def generate_embeddings(texts: List[str]) -> List[List[float]]:
-    if model is None:
-        raise RuntimeError("SentenceTransformer model is not loaded.")
     if not texts:
         return []
-    
-    # encode returns a numpy array, convert to list of floats
-    embeddings = model.encode(texts, batch_size=32, convert_to_numpy=True)
+
+    model = get_model()
+    embeddings = model.encode(
+        texts,
+        batch_size=4,
+        convert_to_numpy=True
+    )
     return embeddings.tolist()
+
 
 def process_document_embeddings(db: Session, document_id: uuid.UUID, user_id: uuid.UUID, reprocess: bool = False) -> Document:
     doc = db.query(Document).filter(Document.id == document_id, Document.owner_id == user_id).first()
